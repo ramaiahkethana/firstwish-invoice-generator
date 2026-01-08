@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIRSTWISH INVOICE</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 3px solid #1a3a3a;
+            padding-bottom: 20px;
+        }
+
+        .header h1 {
+            color: #1a3a3a;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 15px;
+        }
+
+        .form-section {
+            background: #fafafa;
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid #e8e8e8;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #1a3a3a;
+            box-shadow: 0 0 0 3px rgba(26, 58, 58, 0.1);
+            background: #fefefe;
+        }
+
+        /* Added searchable dropdown styles */
+        .searchable-dropdown {
+            position: relative;
+        }
+
+        .dropdown-input {
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+            background: white;
+            width: 100%;
+            cursor: text;
+        }
+
+        .dropdown-input:focus {
+            outline: none;
+            border-color: #1a3a3a;
+            box-shadow: 0 0 0 3px rgba(26, 58, 58, 0.1);
+            background: #fefefe;
+        }
+
+        .dropdown-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+        }
+
+        .dropdown-item.selected {
+            background: #e8f4f1;
+            color: #1a3a3a;
+            font-weight: 600;
+        }
+
+        .dropdown-empty {
+            padding: 12px 14px;
+            color: #999;
+            text-align: center;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-add {
+            background: #1a3a3a;
+            color: white;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-add:hover:not(:disabled) {
+            background: #0f2626;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(26, 58, 58, 0.25);
+        }
+
+        .btn-add:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-print {
+            background: #2c7a3f;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #1f5a2e;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 122, 63, 0.25);
+        }
+
+        .btn-delete {
+            background: #c23d3d;
+            color: white;
+            padding: 8px 14px;
+            font-size: 12px;
+        }
+
+        .btn-delete:hover {
+            background: #9c2f2f;
+        }
+
+        .btn-new {
+            background: #5a5a5a;
+            color: white;
+        }
+
+        .btn-new:hover {
+            background: #3a3a3a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(90, 90, 90, 0.25);
+        }
+
+        .error {
+            color: #c23d3d;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .success {
+            color: #2c7a3f;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .table-section {
+            margin-bottom: 30px;
+        }
+
+        .table-section h2 {
+            color: #1a3a3a;
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e8e8e8;
+        }
+
+        thead {
+            background: #1a3a3a;
+            color: white;
+        }
+
+        th {
+            padding: 14px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #fafafa;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 40px 20px;
+            font-size: 15px;
+        }
+
+        .summary {
+            background: #fafafa;
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            border: 1px solid #e8e8e8;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 15px;
+            align-items: center;
+        }
+
+        .summary-row label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-row.total {
+            border-top: 2px solid #1a3a3a;
+            padding-top: 12px;
+            font-size: 18px;
+        }
+
+        .summary-row.total label {
+            color: #1a3a3a;
+        }
+
+        .summary-row.total span {
+            color: #1a3a3a;
+            font-weight: 700;
+        }
+
+        .invoice-meta {
+            background: #fafafa;
+            padding: 24px;
+            border-radius: 10px;
+            margin-bottom: 24px;
+            border: 1px solid #e8e8e8;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-item label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-item input {
+            padding: 12px 14px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .meta-item input:focus {
+            outline: none;
+            border-color: #1a3a3a;
+            box-shadow: 0 0 0 3px rgba(26, 58, 58, 0.1);
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .form-section,
+            .button-group,
+            .btn-print {
+                display: none;
+            }
+
+            .meta-item input {
+                display: none;
+            }
+
+            .meta-item::after {
+                content: attr(data-value);
+                display: block;
+                padding: 10px 0;
+                border-bottom: 1px solid #ddd;
+            }
+
+            table {
+                box-shadow: none;
+                page-break-inside: avoid;
+                border: 1px solid #333;
+            }
+
+            .summary {
+                page-break-inside: avoid;
+                border: 1px solid #333;
+            }
+
+            .invoice-meta {
+                page-break-inside: avoid;
+                border: 1px solid #333;
+            }
+
+            thead {
+                display: table-header-group;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <div class="header">
+                <h1>FIRSTWISH INVOICE</h1>
+                <!-- <p>Professional billing system with real-time calculations</p> -->
+            </div>
+
+            <!-- CSV File Upload Section -->
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Upload Items CSV File</label>
+                        <input 
+                            type="file" 
+                            @change="handleFileUpload" 
+                            accept=".csv"
+                            ref="csvFileInput"
+                            style="padding: 8px;"
+                        >
+                        <small style="color: #666; font-size: 12px; margin-top: 4px;">
+                            Upload your items.csv file to load custom products, or use default items below.
+                        </small>
+                        <div v-if="csvStatus" :class="csvStatus.type" style="margin-top: 6px;">
+                            {{ csvStatus.message }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Searchable dropdown instead of select -->
+            <div class="form-section">
+                <div class="form-row">
+                    <div class="form-group searchable-dropdown">
+                        <label>Search & Select Item</label>
+                        <input 
+                            v-model="searchQuery"
+                            @focus="showDropdown = true"
+                            @blur="closeDropdown"
+                            class="dropdown-input"
+                            type="text"
+                            placeholder="Search by item name..."
+                        >
+                        <div v-if="showDropdown && filteredItems.length > 0" class="dropdown-list">
+                            <div 
+                                v-for="item in filteredItems" 
+                                :key="item.id"
+                                @mousedown="selectItem(item)"
+                                :class="['dropdown-item', { selected: selectedItemSize === `${item.name} - ${item.unit} (₹${item.price})` }]"
+                            >
+                                {{ item.name }} - {{ item.unit }} (₹{{ item.price }})
+                            </div>
+                        </div>
+                        <div v-if="showDropdown && filteredItems.length === 0" class="dropdown-empty">
+                            No items found
+                        </div>
+                        <div v-if="itemError" class="error">{{ itemError }}</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input 
+                            v-model.number="quantity" 
+                            type="number" 
+                            min="1" 
+                            placeholder="Enter quantity"
+                        >
+                        <div v-if="quantityError" class="error">{{ quantityError }}</div>
+                    </div>
+                    <div class="form-group" v-if="showCustomPrice">
+                        <label>Custom Price (₹)</label>
+                        <input 
+                            v-model.number="customPrice" 
+                            type="number" 
+                            min="0" 
+                            step="0.01"
+                            placeholder="Enter custom price"
+                        >
+                        <div v-if="customPriceError" class="error">{{ customPriceError }}</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-add" @click="addItem" :disabled="!canAddItem">
+                        Add to Invoice
+                    </button>
+                    <button class="btn btn-new" @click="newInvoice">
+                        New Invoice
+                    </button>
+                </div>
+                <div v-if="duplicateError" class="error" style="margin-top: 10px;">
+                    {{ duplicateError }}
+                </div>
+                <div v-if="successMessage" class="success" style="margin-top: 10px;">
+                    {{ successMessage }}
+                </div>
+            </div>
+
+            <!-- Invoice Table -->
+            <div class="table-section">
+                <h2>Invoice Items</h2>
+                <table v-if="invoiceItems.length > 0">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Size</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Discount %</th>
+                            <th>Total Value</th>
+                            <th>After Discount</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in invoiceItems" :key="index">
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.unit }}</td>
+                            <td>₹{{ item.price.toFixed(2) }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.discount }}%</td>
+                            <td>₹{{ item.totalValue.toFixed(2) }}</td>
+                            <td><strong>₹{{ item.finalValue.toFixed(2) }}</strong></td>
+                            <td>
+                                <button class="btn btn-delete" @click="removeItem(index)">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div v-else class="empty-message">
+                    No items added yet. Start by selecting an item above.
+                </div>
+            </div>
+
+            <!-- Summary Section -->
+            <div v-if="invoiceItems.length > 0">
+                <div class="summary">
+                    <div class="summary-row">
+                        <label>Subtotal:</label>
+                        <span>₹{{ totalValue.toFixed(2) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <label>Total Discount:</label>
+                        <span>₹{{ totalDiscount.toFixed(2) }}</span>
+                    </div>
+                    <div class="summary-row total">
+                        <label>Grand Total (After Discount):</label>
+                        <span>₹{{ grandTotal.toFixed(2) }}</span>
+                    </div>
+                </div>
+
+                <!-- Invoice Meta -->
+                <div class="invoice-meta">
+                    <div class="meta-item" :data-value="invoiceDateTime">
+                        <label>Date:</label>
+                        <input 
+                            v-model="invoiceDateTime" 
+                            type="date"
+                            @change="updateDateTime"
+                        >
+                    </div>
+                    <div class="meta-item" :data-value="billEnteredBy">
+                        <label>Bill Entered By:</label>
+                        <input 
+                            v-model="billEnteredBy" 
+                            type="text" 
+                            placeholder="Enter employee name"
+                        >
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-print" @click="printInvoice">
+                        Print Invoice
+                    </button>
+                    <button class="btn btn-new" @click="newInvoice">
+                        New Invoice
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    items: [],
+                    selectedItemSize: '',
+                    quantity: 1,
+                    invoiceItems: [],
+                    itemError: '',
+                    quantityError: '',
+                    customPriceError: '',
+                    duplicateError: '',
+                    successMessage: '',
+                    billEnteredBy: '',
+                    searchQuery: '',
+                    csvStatus: null,
+                    customPrice: null,
+                    invoiceDateTime: new Date().toISOString().slice(0, 10),
+                    autoSaveTimeout: null,
+                    lastSaveTime: null
+                };
+            },
+            computed: {
+                filteredItems() {
+                    if (!this.searchQuery.trim()) {
+                        return this.items;
+                    }
+                    const query = this.searchQuery.toLowerCase();
+                    return this.items.filter(item => 
+                        item.name.toLowerCase().includes(query) ||
+                        item.unit.toLowerCase().includes(query) ||
+                        item.price.toString().includes(query)
+                    );
+                },
+                canAddItem() {
+                    const hasValidItem = this.selectedItemSize && this.quantity > 0;
+                    if (!hasValidItem) return false;
+                    
+                    // If item has zero price, require custom price
+                    if (this.showCustomPrice) {
+                        return this.customPrice && this.customPrice > 0;
+                    }
+                    
+                    return true;
+                },
+                showCustomPrice() {
+                    if (!this.selectedItemSize) return false;
+                    
+                    const item = this.items.find(i => 
+                        `${i.name} - ${i.unit} (₹${i.price})` === this.selectedItemSize
+                    );
+                    
+                    return item && item.price === 0;
+                },
+                totalValue() {
+                    return this.invoiceItems.reduce((sum, item) => sum + item.totalValue, 0);
+                },
+                totalDiscount() {
+                    return this.invoiceItems.reduce((sum, item) => sum + item.discountAmount, 0);
+                },
+                grandTotal() {
+                    return this.totalValue - this.totalDiscount;
+                }
+            },
+            methods: {
+                closeDropdown() {
+                    window.setTimeout(() => {
+                        this.showDropdown = false;
+                    }, 200);
+                },
+                updateDateTime() {
+                    // Handle datetime input changes
+                    this.saveToStorage();
+                },
+                loadCSV() {
+                    // Load default fallback data on page load
+                    // this.loadFallbackData();
+                },
+                handleFileUpload(event) {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    
+                    if (file.type !== 'text/csv' && !file.name.toLowerCase().endsWith('.csv')) {
+                        this.csvStatus = {
+                            type: 'error',
+                            message: 'Please select a valid CSV file.'
+                        };
+                        return;
+                    }
+                    
+                    this.csvStatus = {
+                        type: 'success',
+                        message: 'Loading CSV file...'
+                    };
+                    
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const csvText = e.target.result;
+                            this.parseCSVData(csvText);
+                            this.csvStatus = {
+                                type: 'success',
+                                message: `Successfully loaded ${this.items.length} items from CSV file.`
+                            };
+                            // Clear status message after 3 seconds
+                            setTimeout(() => {
+                                this.csvStatus = null;
+                            }, 3000);
+                        } catch (error) {
+                            this.csvStatus = {
+                                type: 'error',
+                                message: 'Error parsing CSV file. Please check the format.'
+                            };
+                        }
+                    };
+                    reader.onerror = () => {
+                        this.csvStatus = {
+                            type: 'error',
+                            message: 'Error reading the file.'
+                        };
+                    };
+                    reader.readAsText(file);
+                },
+                parseCSVData(csvText) {
+                    const lines = csvText.trim().split('\n');
+                    this.items = []; // Clear existing items
+                    
+                    // Skip header row and process data rows
+                    for (let i = 1; i < lines.length; i++) {
+                        const line = lines[i].trim();
+                        if (!line) continue;
+                        
+                        // Parse CSV line (handle commas and quotes)
+                        const parts = this.parseCSVLine(line);
+                        
+                        // Only add items with valid name and price
+                        if (parts.length >= 3 && parts[0] && parts[2] && !isNaN(parts[2])) {
+                            this.items.push({
+                                name: parts[0],
+                                unit: parts[1] || 'Unit',
+                                price: parseInt(parts[2]),
+                                discount: parseInt(parts[3]) || 0
+                            });
+                        }
+                    }
+                },
+                parseCSVLine(line) {
+                    const result = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < line.length; i++) {
+                        const char = line[i];
+                        
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            result.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    
+                    result.push(current.trim());
+                    return result;
+                },
+                selectItem(item) {
+                    this.selectedItemSize = `${item.name} - ${item.unit} (₹${item.price})`;
+                    this.searchQuery = this.selectedItemSize;
+                    this.showDropdown = false;
+                    
+                    // Reset custom price when selecting new item
+                    this.customPrice = null;
+                    this.customPriceError = '';
+                    
+                    // If item has zero price, focus on custom price field after a short delay
+                    if (item.price === 0) {
+                        this.$nextTick(() => {
+                            // Focus will be handled by Vue's reactivity
+                        });
+                    }
+                },
+                addItem() {
+                    const item = this.items.find(i => 
+                        `${i.name} - ${i.unit} (₹${i.price})` === this.selectedItemSize
+                    );
+                    
+                    if (!item) {
+                        this.itemError = 'Please select a valid item';
+                        return;
+                    }
+                    
+                    if (this.quantity <= 0) {
+                        this.quantityError = 'Quantity must be greater than 0';
+                        return;
+                    }
+                    
+                    // Handle custom pricing for zero-price items
+                    let finalPrice = item.price;
+                    if (item.price === 0) {
+                        if (!this.customPrice || this.customPrice <= 0) {
+                            this.customPriceError = 'Please enter a valid custom price';
+                            return;
+                        }
+                        finalPrice = this.customPrice;
+                    }
+                    
+                    const isDuplicate = this.invoiceItems.some(invItem => 
+                        invItem.name === item.name && invItem.unit === item.unit
+                    );
+                    
+                    if (isDuplicate) {
+                        this.duplicateError = 'This item and size combination already exists!';
+                        return;
+                    }
+                    
+                    const totalValue = finalPrice * this.quantity;
+                    const discountAmount = (totalValue * item.discount) / 100;
+                    
+                    this.invoiceItems.push({
+                        name: item.name,
+                        unit: item.unit,
+                        price: finalPrice,
+                        quantity: this.quantity,
+                        discount: item.discount,
+                        totalValue: totalValue,
+                        discountAmount: discountAmount,
+                        finalValue: totalValue - discountAmount
+                    });
+
+                    this.itemError = '';
+                    this.quantityError = '';
+                    this.customPriceError = '';
+                    this.duplicateError = '';
+                    
+                    this.saveToStorage();
+
+                    this.successMessage = 'Item added successfully!';
+                    this.resetForm();
+
+                    window.setTimeout(() => {
+                        this.successMessage = '';
+                    }, 2000);
+                },
+                removeItem(index) {
+                    this.invoiceItems.splice(index, 1);
+                    this.saveToStorage();
+                },
+                resetForm() {
+                    this.selectedItemSize = '';
+                    this.searchQuery = '';
+                    this.quantity = 1;
+                    this.customPrice = null;
+                    this.customPriceError = '';
+                },
+                printInvoice() {
+                    window.print();
+                },
+                newInvoice() {
+                    if (this.invoiceItems.length === 0) {
+                        this.invoiceItems = [];
+                        this.billEnteredBy = '';
+                        this.invoiceDateTime = new Date().toISOString().slice(0, 10);
+                        return;
+                    }
+                    
+                    const confirmed = window.confirm('This will delete all current invoice data. Are you sure?');
+                    if (confirmed) {
+                        this.invoiceItems = [];
+                        this.billEnteredBy = '';
+                        this.invoiceDateTime = new Date().toISOString().slice(0, 10);
+                    }
+                    localStorage.removeItem('invoiceData');
+                    localStorage.removeItem('invoiceTimestamp');
+                },
+                saveToStorage() {
+                    window.clearTimeout(this.autoSaveTimeout);
+                    
+                    this.autoSaveTimeout = window.setTimeout(() => {
+                        const dataToSave = {
+                            invoiceItems: this.invoiceItems,
+                            billEnteredBy: this.billEnteredBy,
+                            invoiceDateTime: this.invoiceDateTime
+                        };
+                        
+                        localStorage.setItem('invoiceData', JSON.stringify(dataToSave));
+                        localStorage.setItem('invoiceTimestamp', Date.now().toString());
+                    }, 3000);
+                },
+                loadFromStorage() {
+                    const timestamp = localStorage.getItem('invoiceTimestamp');
+                    const data = localStorage.getItem('invoiceData');
+                    
+                    if (timestamp && data) {
+                        const timeDiff = Date.now() - parseInt(timestamp);
+                        const thirtySecondsInMs = 30 * 1000;
+                        
+                        if (timeDiff < thirtySecondsInMs) {
+                            const savedData = JSON.parse(data);
+                            this.invoiceItems = savedData.invoiceItems || [];
+                            this.billEnteredBy = savedData.billEnteredBy || '';
+                            this.invoiceDateTime = savedData.invoiceDateTime;
+                        } else {
+                            localStorage.removeItem('invoiceData');
+                            localStorage.removeItem('invoiceTimestamp');
+                        }
+                    }
+                }
+            },
+            mounted() {
+                this.loadCSV();
+                this.loadFromStorage();
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>

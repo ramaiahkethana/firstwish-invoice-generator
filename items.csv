@@ -1,0 +1,15 @@
+Item Name,Unit,Price,Discount Percentage
+Red Velvet,1/2 Kg,500,40
+Red Velvet,1 Kg,900,40
+Popper,Small,80,15
+Popper,Big,100,15
+Fire Candle,Small,20,15
+Fire Candle,,30,15
+Extra at 5%,,0,5%
+Extra at 10%,,0,10%
+Extra at 15%,,0,15%
+Extra at 20%,,0,20%
+Extra at 25%,,0,25%
+Extra at 30%,,0,30%
+Extra at 35%,,0,35%
+Extra at 40%,,0,40%
